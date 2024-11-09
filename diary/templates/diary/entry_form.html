@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}
+    {% if form.instance.pk %}Редактирование записи{% else %}Новая запись{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Картинка сверху страницы -->
+    <div class="text-center mb-4">
+        <img src="{% static 'images/4.png' %}" alt="Новая запись" class="img-fluid" style="max-width: 300px; height: auto;">
+    </div>
+
+    <h1>
+        {% if form.instance.pk %}Редактирование записи{% else %}Новая запись{% endif %}
+    </h1>
+    <form method="post" enctype="multipart/form-data">  <!-- Добавлен enctype для загрузки файлов -->
+        {% csrf_token %}
+        {{ form.as_p }}  <!-- Поля формы будут автоматически сгенерированы -->
+
+        <div class="d-flex justify-content-between">
+            <button type="submit" class="btn btn-success">Сохранить</button>
+            <a href="{% url 'diary:my_diary' %}" class="btn btn-secondary">Назад</a>
+        </div>
+    </form>
+
+    {% if form.instance.pk %}
+        <!-- Кнопка удаления записи -->
+        <form method="post" action="{% url 'diary:delete_entry' form.instance.pk %}" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger" onclick="return confirm('Вы уверены, что хотите удалить эту запись?')">Удалить</button>
+        </form>
+    {% endif %}
+</div>
+{% endblock %}

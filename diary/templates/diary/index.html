@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}Публичные записи{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Центрируем заголовок -->
+    <h1 class="text-center">Публичные записи</h1>
+
+    <!-- Картинка сверху страницы -->
+    <div class="text-center mb-4">
+        <img src="{% static 'images/3.png' %}" alt="Публичные записи" class="img-fluid" style="max-width: 300px; height: auto;">
+    </div>
+
+    <!-- Если нет записей, показываем сообщение -->
+    {% if entries %}
+        {% for entry in entries %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">{{ entry.title }}</h5>
+
+                    <!-- Если у записи есть изображение, показываем его с заданными стилями -->
+                    {% if entry.image %}
+                        <img src="{{ entry.image.url }}" alt="Изображение записи"
+                             class="img-fluid mb-3" style="width: 100%; max-width: 300px; height: auto; object-fit: cover;">
+                    {% endif %}
+
+                    <p class="card-text">{{ entry.content }}</p>
+                    <p class="card-text">
+                        <small class="text-muted">Автор: {{ entry.author.email }} | Дата: {{ entry.created_at }}</small>
+                    </p>
+
+                    {% if user.is_authenticated %}
+                        {% if entry.author == user %}
+                            <!-- Кнопка для редактирования личной записи -->
+                            <a href="{% url 'diary:update_entry' entry.id %}" class="btn btn-primary">Редактировать</a>
+
+                            <!-- Кнопка для удаления записи -->
+                            <a href="{% url 'diary:delete_entry' entry.id %}" class="btn btn-danger"
+                               onclick="return confirm('Вы уверены, что хотите удалить эту запись?')">Удалить</a>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>Нет доступных записей.</p>
+    {% endif %}
+</div>
+{% endblock %}

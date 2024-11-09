@@ -1,0 +1,38 @@
+# Папки для статических и медиафайлов
+/static/
+/media/
+
+# Папки для миграций
+*/migrations/
+
+# Данные баз данных
+*.sqlite3
+
+# Файлы настроек среды
+*.env
+
+# Логи
+*.log
+
+# Папка для сборки pyc
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Папка виртуального окружения
+venv/
+env/
+.venv/
+ENV/
+env.bak/
+venv.bak/
+
+# PyCharm
+.idea/
+
+# Системные файлы Mac
+.DS_Store
+
+# Файлы настроек Windows
+Thumbs.db
