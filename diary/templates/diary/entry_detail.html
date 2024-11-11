@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ entry.title }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="text-center mb-4">
+        <h1>{{ entry.title }}</h1>
+        {% if entry.image %}
+            <img src="{{ entry.image.url }}" alt="{{ entry.title }}" class="img-fluid mb-3" style="max-width: 600px;">
+        {% endif %}
+    </div>
+    <p>{{ entry.content }}</p>
+    <p><strong>Автор:</strong> {{ entry.author.email }}</p>
+    <p><strong>Дата публикации:</strong> {{ entry.created_at }}</p>
+
+    <a href="{% url 'diary:index' %}" class="btn btn-secondary">Назад</a>
+</div>
+{% endblock %}

@@ -5,6 +5,8 @@ from .views import (
     EntryCreateView,
     EntryDeleteView,
     EntryUpdateView,
+    EntryDetailView,  # Добавлен импорт для подробного просмотра записи
+    SearchView,  # Добавляем импорт для представления поиска
 )
 
 app_name = "diary"
@@ -23,6 +25,12 @@ urlpatterns = [
     path(
         "<int:pk>/delete/", EntryDeleteView.as_view(), name="delete_entry"
     ),  # Удаление записи
+    path(
+        "<int:pk>/", EntryDetailView.as_view(), name="entry_detail"
+    ),  # Подробный просмотр записи
+    path(
+        "search/", SearchView.as_view(), name="search"
+    ),  # Новый маршрут для поиска
 ]
 
 # Обработчик для медиа-файлов

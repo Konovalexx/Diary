@@ -1,11 +1,12 @@
 from django.utils import timezone
-from django.views.generic import ListView, CreateView, DeleteView, UpdateView
+from django.views.generic import ListView, CreateView, DeleteView, UpdateView, DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import PermissionDenied
+from django.db.models import Q
 from .models import Entry
-from .forms import EntryForm
+from .forms import EntryForm, SearchForm
 
 
 class IndexView(ListView):
@@ -36,6 +37,44 @@ class MyDiaryView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         """Получаем записи, принадлежащие текущему пользователю."""
         return Entry.objects.filter(author=self.request.user).order_by("-created_at")
+
+
+class SearchView(ListView):
+    """Представление для поиска записей по запросу."""
+
+    model = Entry
+    template_name = 'diary/index.html'  # Используем тот же шаблон, что и для отображения публичных записей
+    context_object_name = 'entries'
+
+    def get_queryset(self):
+        """Фильтруем записи по запросу."""
+        query = self.request.GET.get('query', '')
+        is_public = self.request.GET.get('is_public', '')  # Добавляем фильтрацию по публичности
+        author = self.request.GET.get('author', '')
+
+        # Базовый queryset: только публичные записи
+        queryset = Entry.objects.filter(is_public=True).order_by('-created_at')
+
+        # Фильтрация по запросу
+        if query:
+            queryset = queryset.filter(Q(title__icontains=query) | Q(content__icontains=query))
+
+        # Фильтрация по публичности (если указано)
+        if is_public:
+            queryset = queryset.filter(is_public=True)
+
+        # Фильтрация по автору (если указан)
+        if author:
+            queryset = queryset.filter(author__email__icontains=author)
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        """Добавляем форму поиска в контекст."""
+        context = super().get_context_data(**kwargs)
+        context['search_form'] = SearchForm(self.request.GET)
+        context["current_year"] = timezone.now().year  # Добавляем текущий год
+        return context
 
 
 class EntryCreateView(LoginRequiredMixin, CreateView):
@@ -93,3 +132,17 @@ class EntryDeleteView(LoginRequiredMixin, DeleteView):
         if entry.author != self.request.user:
             raise PermissionDenied("У вас нет прав на удаление этой записи.")
         return entry
+
+
+class EntryDetailView(DetailView):
+    """Представление для просмотра подробной записи."""
+
+    model = Entry
+    template_name = "diary/entry_detail.html"
+    context_object_name = "entry"
+
+    def get_context_data(self, **kwargs):
+        """Добавляем текущий год для футера."""
+        context = super().get_context_data(**kwargs)
+        context["current_year"] = timezone.now().year
+        return context

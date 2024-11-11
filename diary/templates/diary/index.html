@@ -9,6 +9,17 @@
     <!-- Центрируем заголовок -->
     <h1 class="text-center">Публичные записи</h1>
 
+    <!-- Форма поиска -->
+    <div class="text-center mb-4">
+        <form method="get" action="{% url 'diary:search' %}">
+            {% csrf_token %}
+            <div class="input-group">
+                {{ search_form.query }}
+                <button class="btn btn-primary" type="submit">Поиск</button>
+            </div>
+        </form>
+    </div>
+
     <!-- Картинка сверху страницы -->
     <div class="text-center mb-4">
         <img src="{% static 'images/3.png' %}" alt="Публичные записи" class="img-fluid" style="max-width: 300px; height: auto;">
@@ -19,7 +30,10 @@
         {% for entry in entries %}
             <div class="card mb-3">
                 <div class="card-body">
-                    <h5 class="card-title">{{ entry.title }}</h5>
+                    <!-- Ссылка на подробный просмотр записи -->
+                    <h5 class="card-title">
+                        <a href="{% url 'diary:entry_detail' entry.id %}">{{ entry.title }}</a>
+                    </h5>
 
                     <!-- Если у записи есть изображение, показываем его с заданными стилями -->
                     {% if entry.image %}
