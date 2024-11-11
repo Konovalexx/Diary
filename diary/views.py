@@ -1,5 +1,11 @@
 from django.utils import timezone
-from django.views.generic import ListView, CreateView, DeleteView, UpdateView, DetailView
+from django.views.generic import (
+    ListView,
+    CreateView,
+    DeleteView,
+    UpdateView,
+    DetailView,
+)
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.shortcuts import get_object_or_404
@@ -43,21 +49,25 @@ class SearchView(ListView):
     """Представление для поиска записей по запросу."""
 
     model = Entry
-    template_name = 'diary/index.html'  # Используем тот же шаблон, что и для отображения публичных записей
-    context_object_name = 'entries'
+    template_name = "diary/index.html"  # Используем тот же шаблон, что и для отображения публичных записей
+    context_object_name = "entries"
 
     def get_queryset(self):
         """Фильтруем записи по запросу."""
-        query = self.request.GET.get('query', '')
-        is_public = self.request.GET.get('is_public', '')  # Добавляем фильтрацию по публичности
-        author = self.request.GET.get('author', '')
+        query = self.request.GET.get("query", "")
+        is_public = self.request.GET.get(
+            "is_public", ""
+        )  # Добавляем фильтрацию по публичности
+        author = self.request.GET.get("author", "")
 
         # Базовый queryset: только публичные записи
-        queryset = Entry.objects.filter(is_public=True).order_by('-created_at')
+        queryset = Entry.objects.filter(is_public=True).order_by("-created_at")
 
         # Фильтрация по запросу
         if query:
-            queryset = queryset.filter(Q(title__icontains=query) | Q(content__icontains=query))
+            queryset = queryset.filter(
+                Q(title__icontains=query) | Q(content__icontains=query)
+            )
 
         # Фильтрация по публичности (если указано)
         if is_public:
@@ -72,7 +82,7 @@ class SearchView(ListView):
     def get_context_data(self, **kwargs):
         """Добавляем форму поиска в контекст."""
         context = super().get_context_data(**kwargs)
-        context['search_form'] = SearchForm(self.request.GET)
+        context["search_form"] = SearchForm(self.request.GET)
         context["current_year"] = timezone.now().year  # Добавляем текущий год
         return context
 

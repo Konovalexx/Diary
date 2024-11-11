@@ -28,9 +28,7 @@ urlpatterns = [
     path(
         "<int:pk>/", EntryDetailView.as_view(), name="entry_detail"
     ),  # Подробный просмотр записи
-    path(
-        "search/", SearchView.as_view(), name="search"
-    ),  # Новый маршрут для поиска
+    path("search/", SearchView.as_view(), name="search"),  # Новый маршрут для поиска
 ]
 
 # Обработчик для медиа-файлов
