@@ -41,7 +41,9 @@
                              class="img-fluid mb-3" style="width: 100%; max-width: 300px; height: auto; object-fit: cover;">
                     {% endif %}
 
-                    <p class="card-text">{{ entry.content }}</p>
+                    <!-- Добавление фильтра truncatechars -->
+                    <p class="card-text">{{ entry.content|truncatechars:1000 }}</p>
+
                     <p class="card-text">
                         <small class="text-muted">Автор: {{ entry.author.email }} | Дата: {{ entry.created_at }}</small>
                     </p>
